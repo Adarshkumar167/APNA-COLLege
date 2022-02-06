@@ -1,4 +1,4 @@
-// Level Order Traversal 
+// Sum at Kth Level In Binary Tree
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -15,29 +15,49 @@ struct Node{
     }
 };
 
-void printLevelOrder(Node* root){
+/*
+            1
+          /   \
+         2     3
+        / \   / \ 
+       4   5 6   7
+*/
+
+int sumAtK(Node* root, int K){
     if(root == NULL){
-        return;
+        return -1;
     }
+
     queue<Node*> q;
     q.push(root);
     q.push(NULL);
+
+    int level = 0;
+    int sum = 0;
+
     while(!q.empty()){
         Node* node = q.front();
         q.pop();
         if(node != NULL){
-            cout << node -> data << " ";
-            if(node->left)
+            if(level == K){
+                sum += node -> data;
+            }
+            if(node -> left)
                 q.push(node -> left);
             if(node -> right)
                 q.push(node -> right);
         }
-        else if(!q.empty())
+        else if(!q.empty()){
             q.push(NULL);
+            level++;
+        }
     }
+
+    return sum;
 }
 
 int32_t main(){
+
     Node* root = new Node(1);
     root -> left = new Node(2);
     root -> right = new Node(3);
@@ -46,5 +66,5 @@ int32_t main(){
     root -> right -> left = new Node(6);
     root -> right -> right = new Node(7);
 
-    printLevelOrder(root);
+    cout << sumAtK(root, 1);
 }
