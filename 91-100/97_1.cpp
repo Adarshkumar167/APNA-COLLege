@@ -1,4 +1,4 @@
-// Height in Binary Tree
+// Diameter in Binary Tree
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -27,9 +27,21 @@ int calcHeight(Node* root){
     if(root == NULL){
         return 0;
     }
+    return max(calcHeight(root -> left), calcHeight(root -> right)) + 1; 
+}
+
+int calcDiameter(Node* root){
+    if(root == NULL){
+        return 0;
+    }
     int lHeight = calcHeight(root -> left);
-    int rHeight = calcHeight(root -> right);
-    return max(lHeight, rHeight) + 1; 
+    int rHeight = calcHeight(root -> right); 
+    int currDiameter = lHeight + rHeight + 1;
+
+    int lDiameter = calcDiameter(root -> left);
+    int rDiameter = calcDiameter(root -> right);
+
+    return max(currDiameter, max(lDiameter, rDiameter));
 }
 
 int main(){
@@ -42,7 +54,7 @@ int main(){
     root -> right -> left = new Node(6);
     root -> right -> right = new Node(7);
 
-    cout<<calcHeight(root)<<endl;
+    cout<<calcDiameter(root)<<endl;
 
     return 0;
 }
