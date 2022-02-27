@@ -1,6 +1,4 @@
 #include<iostream>
-#include<climits>
-#include<algorithm>
 using namespace std;
 
 struct Node{
@@ -13,58 +11,70 @@ struct Node{
     }
 };
 
-struct Info{
-    int size;
-    int max;
-    int min;
-    int ans;
-    bool isBST;
-};
-
-Info largestBSTinBT(Node* root) {
-    if(root == NULL){
-        return {0, INT_MIN, INT_MAX, 0, true};
-    }
-    if(root->left == NULL && root->right == NULL){
-        return{1, root->data, root->data, 1, true};
-    }
-
-    Info leftInfo = largestBSTinBT(root->left);
-    Info rightInfo = largestBSTinBT(root->right);
-
-    Info curr;
-    curr.size = (1 + leftInfo.size + rightInfo.size);
-
-    if(leftInfo.isBST && rightInfo.isBST && leftInfo.max < root->data && rightInfo.min > root->data){
-        curr.min = min(leftInfo.min, min(rightInfo.min, root->data));
-        curr.max = max(rightInfo.max, max(leftInfo.max, root->data));
-
-        curr.ans = curr.size;
-        curr.isBST = true;
-
-        return curr;
-    }
-
-    curr.ans = max(leftInfo.ans, rightInfo.ans);
-    curr.isBST = false;
-    return curr;
+void swap(int *a, int *b){
+    int temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-int main(){
-    
-    /*      15
+void calcPointers(Node* root, Node** first, Node** mid, Node** last, Node** prev){
+    if(root == NULL){
+        return;
+    }
+    calcPointers(root->left, first, mid, last, prev);
+    if(*prev && root->data < (*prev)->data){
+        if(!*first){
+            *first = *prev;
+            *mid = root;
+        }
+        else{
+            *last = root;
+        }
+    }
+    *prev = root;
+    calcPointers(root->right, first, mid, last, prev);
+}
+
+void restoreBST(Node* root){
+    Node* first, *mid, *last, *prev;
+    first = NULL;
+    mid = NULL;
+    last = NULL;
+    prev = NULL;
+    calcPointers(root, &first, &mid, &last, &prev);
+    if(first && last){
+        swap(&(first->data), &(last->data));
+    }
+    else if(first && mid){
+        swap(&(first->data), &(mid->data));
+    }
+}
+
+void inorder(Node* root){
+    if(root == NULL){
+        return;
+    }
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
+}
+
+int main(){   
+    /*      6
            / \
-          20  30
-         /
-        5 
+          9   3
+         / \   \
+        1   4   13
     */
-
-   Node* root = new Node(15);
-   root->left = new Node(20);
-   root->right = new Node(30);
-   root->left->left = new Node(5);
-
-   cout << "Largest BST in BT : " << largestBSTinBT(root).ans << endl;
-
+   Node* root = new Node(6);
+   root->left = new Node(9);
+   root->right = new Node(3);
+   root->left->left = new Node(1);
+   root->left->right = new Node(4);
+   root->right->right = new Node(13);
+   inorder(root); cout << endl;
+   restoreBST(root);
+   inorder(root);
+   cout << endl;
    return 0;
 }
