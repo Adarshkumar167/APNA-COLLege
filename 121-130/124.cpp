@@ -30,5 +30,6 @@ int main(){
     if(minLength == n+1)
         cout << "No such subarray exists." << endl;
     else cout << "Smallest length subarray is : " << minLength << endl;
+    
     return 0;
 }
